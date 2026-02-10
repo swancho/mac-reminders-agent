@@ -14,6 +14,14 @@
         "Set a reminder to submit report by Friday"
       ]
     },
+    "repeat": {
+      "labels": {
+        "daily": "Daily",
+        "weekly": "Weekly",
+        "monthly": "Monthly",
+        "yearly": "Yearly"
+      }
+    },
     "responses": {
       "added": "Added '{title}' reminder{due_text}.",
       "added_no_due": " without a due date",
@@ -39,6 +47,14 @@
         "오늘 오후 3시에 전화하기 미리알림 만들어줘",
         "이번 주 금요일까지 보고서 제출 미리알림 넣어줘"
       ]
+    },
+    "repeat": {
+      "labels": {
+        "daily": "매일",
+        "weekly": "매주",
+        "monthly": "매월",
+        "yearly": "매년"
+      }
     },
     "responses": {
       "added": "'{title}' 미리알림을 추가했어요{due_text}.",
@@ -66,6 +82,14 @@
         "金曜日までにレポート提出のリマインダーを設定して"
       ]
     },
+    "repeat": {
+      "labels": {
+        "daily": "毎日",
+        "weekly": "毎週",
+        "monthly": "毎月",
+        "yearly": "毎年"
+      }
+    },
     "responses": {
       "added": "「{title}」リマインダーを追加しました{due_text}。",
       "added_no_due": "（期限なし）",
@@ -91,6 +115,14 @@
         "创建今天下午3点打电话的提醒",
         "设置周五前提交报告的提醒"
       ]
+    },
+    "repeat": {
+      "labels": {
+        "daily": "每天",
+        "weekly": "每周",
+        "monthly": "每月",
+        "yearly": "每年"
+      }
     },
     "responses": {
       "added": "已添加「{title}」提醒{due_text}。",
