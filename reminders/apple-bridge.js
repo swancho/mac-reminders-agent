@@ -96,14 +96,17 @@ async function list(scope) {
 
 function parseISO(dueISO) {
   if (!dueISO) return null;
-  const m = dueISO.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):\d{2}\+09:00$/);
-  if (!m) return null;
+
+  // Use Date object to parse any valid ISO format and convert to local time
+  const d = new Date(dueISO);
+  if (isNaN(d.getTime())) return null;
+
   return {
-    year: Number(m[1]),
-    month: Number(m[2]),
-    day: Number(m[3]),
-    hour: Number(m[4]),
-    minute: Number(m[5]),
+    year: d.getFullYear(),
+    month: d.getMonth() + 1, // getMonth() is 0-indexed
+    day: d.getDate(),
+    hour: d.getHours(),
+    minute: d.getMinutes(),
   };
 }
 
@@ -140,8 +143,8 @@ async function runSwiftHelper(args) {
           return reject(new Error(json.error || 'Swift helper failed'));
         }
         resolve(json);
-      } catch {
-        resolve({ ok: true, raw: text });
+      } catch (parseErr) {
+        reject(new Error('Swift returned invalid JSON: ' + text.slice(0, 200)));
       }
     });
   });
