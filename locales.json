@@ -17,10 +17,12 @@
     "repeat": {
       "labels": {
         "daily": "Daily",
-        "weekly": "Weekly",
-        "monthly": "Monthly",
-        "yearly": "Yearly"
-      }
+        "weekly": "Every {day}",
+        "monthly": "Monthly on {date}",
+        "yearly": "Yearly on {month}/{date}"
+      },
+      "days": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+      "months": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
     },
     "responses": {
       "added": "Added '{title}' reminder{due_text}.",
@@ -51,10 +53,12 @@
     "repeat": {
       "labels": {
         "daily": "매일",
-        "weekly": "매주",
-        "monthly": "매월",
-        "yearly": "매년"
-      }
+        "weekly": "매주 {day}",
+        "monthly": "매월 {date}일",
+        "yearly": "매년 {month}월 {date}일"
+      },
+      "days": ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"],
+      "months": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     },
     "responses": {
       "added": "'{title}' 미리알림을 추가했어요{due_text}.",
@@ -85,10 +89,12 @@
     "repeat": {
       "labels": {
         "daily": "毎日",
-        "weekly": "毎週",
-        "monthly": "毎月",
-        "yearly": "毎年"
-      }
+        "weekly": "毎週{day}",
+        "monthly": "毎月{date}日",
+        "yearly": "毎年{month}月{date}日"
+      },
+      "days": ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"],
+      "months": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     },
     "responses": {
       "added": "「{title}」リマインダーを追加しました{due_text}。",
@@ -119,10 +125,12 @@
     "repeat": {
       "labels": {
         "daily": "每天",
-        "weekly": "每周",
-        "monthly": "每月",
-        "yearly": "每年"
-      }
+        "weekly": "每周{day}",
+        "monthly": "每月{date}日",
+        "yearly": "每年{month}月{date}日"
+      },
+      "days": ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"],
+      "months": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12"]
     },
     "responses": {
       "added": "已添加「{title}」提醒{due_text}。",

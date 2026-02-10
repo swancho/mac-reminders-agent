@@ -112,10 +112,27 @@ Supported locales: en (English), ko (한국어), ja (日本語), zh (中文)
         process.exit(1);
       }
 
-      // 반복 라벨을 제목에 추가 (예: "회의 (매주)")
+      // 반복 라벨을 제목에 추가 (예: "회의 (매주 화요일)")
       if (repeat && loc.repeat && loc.repeat.labels) {
-        const repeatLabel = loc.repeat.labels[repeat];
-        if (repeatLabel) {
+        let repeatLabel = loc.repeat.labels[repeat];
+        if (repeatLabel && due) {
+          // Parse due date to get day/date/month info
+          const dueDate = new Date(due);
+          const dayIndex = dueDate.getDay(); // 0=Sunday, 1=Monday, ...
+          const dateNum = dueDate.getDate();
+          const monthIndex = dueDate.getMonth(); // 0=Jan, 1=Feb, ...
+
+          const dayName = loc.repeat.days ? loc.repeat.days[dayIndex] : '';
+          const monthName = loc.repeat.months ? loc.repeat.months[monthIndex] : String(monthIndex + 1);
+
+          // Replace placeholders
+          repeatLabel = repeatLabel
+            .replace('{day}', dayName)
+            .replace('{date}', String(dateNum))
+            .replace('{month}', monthName);
+
+          title = `${title} (${repeatLabel})`;
+        } else if (repeatLabel) {
           title = `${title} (${repeatLabel})`;
         }
       }
