@@ -1,11 +1,14 @@
 # Mac Reminders Agent
 
-**v1.1.1** | macOS Reminders app integration skill for OpenClaw/Claude agents.
+**v1.2.2** | macOS Reminders app integration skill for OpenClaw/Claude agents.
 
 ## Features
 
-- 📋 List reminders (today/week/all)
+- 📋 List reminders (today/week/all) with unique IDs
 - ➕ Add new reminders with due dates
+- ✏️ **Edit reminders** by ID (title, due date, notes)
+- 🗑️ **Delete reminders** by ID
+- ✅ **Complete reminders** by ID
 - 🔄 **Native Recurrence**: Weekly, daily, monthly, yearly repeating reminders (single reminder, not duplicates)
 - 🌍 Multi-language support (en, ko, ja, zh)
 - ⏰ Cron-compatible for scheduled checks
@@ -99,6 +102,31 @@ node skills/mac-reminders-agent/cli.js add \
   --note "Discuss project timeline"
 ```
 
+### Edit Reminder
+
+```bash
+# First, list reminders to get the ID
+node skills/mac-reminders-agent/cli.js list --scope today --locale ko
+
+# Edit title
+node skills/mac-reminders-agent/cli.js edit --id "ABC123" --title "Updated Meeting" --locale ko
+
+# Edit due date
+node skills/mac-reminders-agent/cli.js edit --id "ABC123" --due "2026-03-01T10:00:00+09:00"
+```
+
+### Delete Reminder
+
+```bash
+node skills/mac-reminders-agent/cli.js delete --id "ABC123" --locale ko
+```
+
+### Complete Reminder
+
+```bash
+node skills/mac-reminders-agent/cli.js complete --id "ABC123" --locale ko
+```
+
 ### Recurring Reminders (Native Recurrence)
 
 ```bash
@@ -141,6 +169,7 @@ node skills/mac-reminders-agent/cli.js add \
 | Parameter | Required | Description |
 |-----------|----------|-------------|
 | `--scope` | No | `today`, `week`, `all` (default: `week`) |
+| `--id` | Yes (edit/delete/complete) | Reminder ID from list output |
 | `--title` | Yes (add) | Reminder title |
 | `--due` | No | ISO 8601 format: `YYYY-MM-DDTHH:mm:ss+09:00` |
 | `--note` | No | Additional notes |
@@ -351,7 +380,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for version history.
 
 ## License
 
-CC BY-NC 4.0 - Free to use and modify, no commercial use.
+MIT License - Free to use, modify, and distribute (including commercial use). See [LICENSE](./LICENSE).
 
 ## Author
 

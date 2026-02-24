@@ -5,6 +5,9 @@
 //   node reminders/apple-bridge.js list --scope week
 //   node reminders/apple-bridge.js add --title "Buy groceries" --due "2026-02-02T15:10:00+09:00"
 //   node reminders/apple-bridge.js add --title "Weekly" --due "..." --repeat weekly
+//   node reminders/apple-bridge.js edit --id "ABC123" --title "New title"
+//   node reminders/apple-bridge.js delete --id "ABC123"
+//   node reminders/apple-bridge.js complete --id "ABC123"
 
 const { execFile } = require('child_process');
 const path = require('path');
@@ -43,57 +46,6 @@ function runAppleScript(source) {
   });
 }
 
-async function list(scope) {
-  scope = scope || 'week';
-
-  const script = `
-  set scope to "${scope}"
-
-  tell application "Reminders"
-    set resultList to {}
-
-    set nowDate to current date
-    set startDate to nowDate
-    set endDate to nowDate
-
-    if scope is "today" then
-      set startDate to nowDate - (time of nowDate)
-      set endDate to startDate + 1 * days
-    else if scope is "week" then
-      set startDate to nowDate - 1 * days
-      set endDate to nowDate + 7 * days
-    end if
-
-    repeat with r in reminders of default list
-      if (completed of r is false) then
-        if scope is "all" then
-          set end of resultList to {name of r as string, due date of r as string}
-        else
-          if due date of r is not missing value then
-            if (due date of r ≥ startDate) and (due date of r ≤ endDate) then
-              set end of resultList to {name of r as string, due date of r as string}
-            end if
-          end if
-        end if
-      end if
-    end repeat
-
-    return resultList
-  end tell
-  `;
-
-  const raw = await runAppleScript(script);
-  const items = (raw || []).map((row) => {
-    if (!Array.isArray(row)) return { title: String(row), due: null };
-    return {
-      title: String(row[0]),
-      due: row[1] ? String(row[1]) : null,
-    };
-  });
-
-  return items;
-}
-
 function parseISO(dueISO) {
   if (!dueISO) return null;
 
@@ -119,9 +71,8 @@ function checkSwift() {
   });
 }
 
-// Run Swift EventKit helper for creating reminders with native recurrence
+// Run Swift EventKit helper
 async function runSwiftHelper(args) {
-  // Check Swift availability
   const hasSwift = await checkSwift();
   if (!hasSwift) {
     throw new Error(
@@ -148,6 +99,13 @@ async function runSwiftHelper(args) {
       }
     });
   });
+}
+
+// List reminders via Swift EventKit (returns IDs)
+async function list(scope) {
+  scope = scope || 'week';
+  const result = await runSwiftHelper(['list', '--scope', scope]);
+  return result.items || [];
 }
 
 async function add(title, dueISO, note, repeat, repeatEnd, interval) {
@@ -246,6 +204,29 @@ async function add(title, dueISO, note, repeat, repeatEnd, interval) {
   };
 }
 
+// Edit reminder via Swift EventKit (by ID)
+async function edit(id, updates) {
+  const args = ['edit', '--id', id];
+  if (updates.title) args.push('--title', updates.title);
+  if (updates.due) args.push('--due', updates.due);
+  if (updates.note !== undefined) args.push('--note', updates.note || '');
+  if (updates.repeat) args.push('--repeat', updates.repeat);
+  if (updates.interval) args.push('--interval', String(updates.interval));
+  if (updates['repeat-end']) args.push('--repeat-end', updates['repeat-end']);
+
+  return await runSwiftHelper(args);
+}
+
+// Delete reminder via Swift EventKit (by ID)
+async function deleteReminder(id) {
+  return await runSwiftHelper(['delete', '--id', id]);
+}
+
+// Complete reminder via Swift EventKit (by ID)
+async function completeReminder(id) {
+  return await runSwiftHelper(['complete', '--id', id]);
+}
+
 async function main() {
   const argv = process.argv.slice(2);
   const args = parseArgs(argv);
@@ -255,12 +236,16 @@ async function main() {
     console.log(`Usage:
   list [--scope today|week|all]
   add --title "TITLE" [--due ISO_DATE] [--note "MEMO"] [--repeat daily|weekly|monthly|yearly] [--interval N] [--repeat-end YYYY-MM-DD]
+  edit --id "ID" [--title "NEW"] [--due ISO_DATE] [--note "NEW"]
+  delete --id "ID"
+  complete --id "ID"
 
 Examples:
   node reminders/apple-bridge.js list --scope week
   node reminders/apple-bridge.js add --title "Meeting" --due "2026-02-02T09:00:00+09:00"
-  node reminders/apple-bridge.js add --title "Weekly standup" --due "2026-02-02T09:00:00+09:00" --repeat weekly
-  node reminders/apple-bridge.js add --title "Bi-weekly" --due "2026-02-02T14:00:00+09:00" --repeat weekly --interval 2`);
+  node reminders/apple-bridge.js edit --id "ABC123" --title "Updated Meeting"
+  node reminders/apple-bridge.js delete --id "ABC123"
+  node reminders/apple-bridge.js complete --id "ABC123"`);
     process.exit(0);
   }
 
@@ -281,6 +266,37 @@ Examples:
         process.exit(1);
       }
       const result = await add(title, due || null, note || null, repeat || null, repeatEnd || null, interval || null);
+      console.log(JSON.stringify(result));
+    } else if (cmd === 'edit') {
+      const id = args.id;
+      if (!id) {
+        console.error('Error: --id is required for edit');
+        process.exit(1);
+      }
+      const result = await edit(id, {
+        title: args.title || '',
+        due: args.due || '',
+        note: args.note,
+        repeat: args.repeat || '',
+        interval: args.interval || '',
+        'repeat-end': args['repeat-end'] || '',
+      });
+      console.log(JSON.stringify(result));
+    } else if (cmd === 'delete') {
+      const id = args.id;
+      if (!id) {
+        console.error('Error: --id is required for delete');
+        process.exit(1);
+      }
+      const result = await deleteReminder(id);
+      console.log(JSON.stringify(result));
+    } else if (cmd === 'complete') {
+      const id = args.id;
+      if (!id) {
+        console.error('Error: --id is required for complete');
+        process.exit(1);
+      }
+      const result = await completeReminder(id);
       console.log(JSON.stringify(result));
     } else {
       console.error('Unknown command:', cmd);

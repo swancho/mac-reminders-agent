@@ -1,11 +1,12 @@
 ---
 name: mac-reminders-agent
-version: 1.1.2
+version: 1.2.2
 author: swancho
-license: CC-BY-NC-4.0
+license: MIT
 description: |
-  Integrate with macOS Reminders app to check today's/this week's tasks or add new reminders.
+  Integrate with macOS Reminders app to check, add, edit, delete, and complete reminders.
   Supports native recurrence (매주/weekly/毎週/每周) via Swift EventKit - creates single reminder with repeat rule.
+  Supports editing and deleting reminders by ID (calendarItemIdentifier from EventKit).
   Supports multiple languages (en, ko, ja, zh) for trigger detection and response formatting.
   When users request recurring reminders, MUST use --repeat option (daily|weekly|monthly|yearly).
 requirements:
@@ -25,8 +26,11 @@ install: |
 
 This skill integrates with the local macOS **Reminders** app to:
 
-- View and organize today's/this week's reminders (work/personal/sessions)
+- View and organize today's/this week's reminders (with unique IDs)
 - Add new reminders based on natural language requests
+- **Edit reminders**: Modify title, due date, notes by ID
+- **Delete reminders**: Remove reminders by ID
+- **Complete reminders**: Mark reminders as done by ID
 - **Native recurrence**: Weekly, daily, monthly, yearly repeating reminders
 - **Multi-language support**: English, Korean, Japanese, Chinese
 
@@ -190,7 +194,92 @@ node skills/mac-reminders-agent/cli.js add --title "Meeting" --due "2026-02-05T0
 
 ---
 
-## 3) Recurring Reminders (Native Recurrence)
+## 3) Edit Reminder
+
+### Trigger Examples (by language)
+
+**English:**
+- "Change the meeting reminder to 10am"
+- "Update the report deadline to next Monday"
+
+**Korean (한국어):**
+- "회의 미리알림 10시로 바꿔줘"
+- "보고서 마감일 다음 주 월요일로 수정해줘"
+
+### Command Invocation
+
+```bash
+# Edit title
+node skills/mac-reminders-agent/cli.js edit --id "ABC123" --title "New Meeting Title" --locale ko
+
+# Edit due date
+node skills/mac-reminders-agent/cli.js edit --id "ABC123" --due "2026-03-01T10:00:00+09:00"
+
+# Edit note
+node skills/mac-reminders-agent/cli.js edit --id "ABC123" --note "Updated notes"
+```
+
+### Parameters
+
+- `--id` (required): Reminder ID (calendarItemIdentifier from list output)
+- `--title` (optional): New title
+- `--due` (optional): New due date in ISO 8601 format
+- `--note` (optional): New note text
+- `--locale` (optional): Response language (en, ko, ja, zh)
+
+### IMPORTANT: Use `list` first to get reminder IDs
+
+Before editing, always run `list` to get the reminder's `id` field. The `id` is an EventKit `calendarItemIdentifier` (UUID-like string).
+
+---
+
+## 4) Delete Reminder
+
+### Trigger Examples (by language)
+
+**English:**
+- "Delete the meeting reminder"
+
+**Korean (한국어):**
+- "회의 미리알림 삭제해줘"
+
+### Command Invocation
+
+```bash
+node skills/mac-reminders-agent/cli.js delete --id "ABC123" --locale ko
+```
+
+### Parameters
+
+- `--id` (required): Reminder ID (from list output)
+- `--locale` (optional): Response language
+
+---
+
+## 5) Complete Reminder
+
+### Trigger Examples (by language)
+
+**English:**
+- "Mark the meeting reminder as done"
+
+**Korean (한국어):**
+- "회의 미리알림 완료 처리해줘"
+
+### Command Invocation
+
+```bash
+node skills/mac-reminders-agent/cli.js complete --id "ABC123" --locale ko
+```
+
+### Parameters
+
+- `--id` (required): Reminder ID (from list output)
+- `--locale` (optional): Response language
+
+---
+
+## 6) Recurring Reminders (Native Recurrence)
 
 Use `--repeat` to create reminders with **native recurrence** (single reminder with repeat rule, not multiple copies).
 
@@ -290,8 +379,11 @@ This skill requires access to the **Reminders** app. On first use:
 
 - Multi-language support via `locales.json` (en, ko, ja, zh)
 - Core commands:
-  - `list --scope today|week|all [--locale XX]`
+  - `list --scope today|week|all [--locale XX]` — returns items with `id` field
   - `add --title ... [--due ...] [--repeat daily|weekly|monthly|yearly] [--interval N] [--repeat-end YYYY-MM-DD] [--locale XX]`
+  - `edit --id ID [--title ...] [--due ...] [--note ...] [--locale XX]`
+  - `delete --id ID [--locale XX]`
+  - `complete --id ID [--locale XX]`
 - **Native recurrence**: Use `--repeat` for recurring reminders (creates single reminder with repeat rule)
 - Automatically detect user language or use explicit `--locale` parameter
 - Format responses using locale-specific templates

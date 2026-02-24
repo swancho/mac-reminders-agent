@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 // mac-reminders-agent unified CLI
-// - Provides a common interface (list/add, JSON output) for any environment.
+// - Provides a common interface (list/add/edit/delete/complete, JSON output) for any environment.
 // - Supports multiple locales (en, ko, ja, zh) for response formatting.
-// - Delegates actual work to reminders/apple-bridge.js (AppleScript + `applescript` module).
+// - Delegates actual work to reminders/apple-bridge.js (AppleScript + EventKit).
 
 const { execFile } = require('child_process');
 const path = require('path');
@@ -97,11 +97,12 @@ async function main() {
 
   if (!cmd || cmd === 'help' || cmd === '--help' || cmd === '-h') {
     console.log(`Usage:
-  node skills/mac-reminders-agent/cli.js list [--scope today|week|all] [--locale en|ko|ja|zh]
-  node skills/mac-reminders-agent/cli.js add --title "TITLE" [--due ISO_DATETIME] [--note "MEMO"] [--locale en|ko|ja|zh]
-
-  # 반복(예: 매주) 옵션 예시
-  node skills/mac-reminders-agent/cli.js add --title "Weekly standup" --due "2026-02-10T09:00:00+09:00" --repeat weekly [--interval N] [--repeat-end "2026-06-30"] [--locale ko]
+  node cli.js list [--scope today|week|all] [--locale en|ko|ja|zh]
+  node cli.js add --title "TITLE" [--due ISO_DATETIME] [--note "MEMO"] [--locale en|ko|ja|zh]
+  node cli.js add --title "Weekly standup" --due "2026-02-10T09:00:00+09:00" --repeat weekly [--interval N] [--repeat-end "2026-06-30"] [--locale ko]
+  node cli.js edit --id "ID" [--title "NEW"] [--due ISO_DATETIME] [--note "NEW"] [--locale en|ko|ja|zh]
+  node cli.js delete --id "ID" [--locale en|ko|ja|zh]
+  node cli.js complete --id "ID" [--locale en|ko|ja|zh]
 
 Supported locales: en (English), ko (한국어), ja (日本語), zh (中文)
 `);
@@ -112,7 +113,7 @@ Supported locales: en (English), ko (한국어), ja (日本語), zh (中文)
     if (cmd === 'list') {
       const scope = args.scope || 'week';
       const result = await runReminderBridge('list', ['--scope', scope]);
-      // Include locale info in response
+      // result is an array of items (from apple-bridge)
       console.log(JSON.stringify({
         locale,
         labels: loc.responses || {},
@@ -185,6 +186,71 @@ Supported locales: en (English), ko (한국어), ja (日本語), zh (中文)
       const message = formatResponse(responses.added || "Added '{title}' reminder{due_text}.", {
         title,
         due_text: dueText
+      });
+
+      console.log(JSON.stringify({
+        ...result,
+        locale,
+        message
+      }));
+    } else if (cmd === 'edit') {
+      const id = args.id;
+      if (!id) {
+        console.error('Error: --id is required for edit');
+        process.exit(1);
+      }
+
+      const extra = ['--id', id];
+      if (args.title) extra.push('--title', args.title);
+      if (args.due) extra.push('--due', args.due);
+      if (args.note !== undefined && args.note !== true) extra.push('--note', args.note);
+      if (args.repeat) extra.push('--repeat', args.repeat);
+      if (args.interval) extra.push('--interval', args.interval);
+      if (args['repeat-end']) extra.push('--repeat-end', args['repeat-end']);
+
+      const result = await runReminderBridge('edit', extra);
+
+      const responses = loc.responses || {};
+      const message = formatResponse(responses.edited || "Updated '{title}' reminder.", {
+        title: result.title || ''
+      });
+
+      console.log(JSON.stringify({
+        ...result,
+        locale,
+        message
+      }));
+    } else if (cmd === 'delete') {
+      const id = args.id;
+      if (!id) {
+        console.error('Error: --id is required for delete');
+        process.exit(1);
+      }
+
+      const result = await runReminderBridge('delete', ['--id', id]);
+
+      const responses = loc.responses || {};
+      const message = formatResponse(responses.deleted || "Deleted '{title}' reminder.", {
+        title: result.title || ''
+      });
+
+      console.log(JSON.stringify({
+        ...result,
+        locale,
+        message
+      }));
+    } else if (cmd === 'complete') {
+      const id = args.id;
+      if (!id) {
+        console.error('Error: --id is required for complete');
+        process.exit(1);
+      }
+
+      const result = await runReminderBridge('complete', ['--id', id]);
+
+      const responses = loc.responses || {};
+      const message = formatResponse(responses.completed || "Completed '{title}'.", {
+        title: result.title || ''
       });
 
       console.log(JSON.stringify({

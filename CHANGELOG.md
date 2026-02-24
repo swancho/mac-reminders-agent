@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.2] - 2026-02-24
+
+### Added
+- **Edit reminders**: `edit --id ID [--title ...] [--due ...] [--note ...]` to modify existing reminders
+- **Delete reminders**: `delete --id ID` to remove reminders
+- **Complete reminders**: `complete --id ID` to mark reminders as done
+- **List with IDs**: `list` now returns `id` (calendarItemIdentifier) for each reminder via EventKit
+- Locale strings for edit/delete/complete responses (en, ko, ja, zh)
+- Trigger examples for edit/delete/complete in locales.json
+
+### Changed
+- **License**: Changed from CC-BY-NC-4.0 to MIT (commercial use now allowed)
+- `list` command now uses Swift EventKit instead of AppleScript (returns IDs and richer data)
+- Updated SKILL.md with edit/delete/complete documentation
+- Updated README.md with new command examples
+
 ## [1.1.1] - 2026-02-10
 
 ### Fixed

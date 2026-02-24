@@ -12,6 +12,18 @@
         "Add a meeting reminder for 9am tomorrow",
         "Create a reminder to call at 3pm today",
         "Set a reminder to submit report by Friday"
+      ],
+      "edit": [
+        "Change the meeting reminder to 10am",
+        "Update the report deadline to next Monday"
+      ],
+      "delete": [
+        "Delete the meeting reminder",
+        "Remove the report submission reminder"
+      ],
+      "complete": [
+        "Mark the meeting reminder as done",
+        "Complete the report submission task"
       ]
     },
     "repeat": {
@@ -28,6 +40,10 @@
       "added": "Added '{title}' reminder{due_text}.",
       "added_no_due": " without a due date",
       "added_with_due": " for {due}",
+      "edited": "Updated '{title}' reminder.",
+      "deleted": "Deleted '{title}' reminder.",
+      "completed": "Completed '{title}'.",
+      "not_found": "Reminder not found.",
       "list_header_incomplete": "Incomplete Reminders",
       "list_header_completed": "Completed",
       "no_reminders": "No reminders found.",
@@ -48,6 +64,18 @@
         "내일 아침 9시에 회의 미리알림 추가해줘",
         "오늘 오후 3시에 전화하기 미리알림 만들어줘",
         "이번 주 금요일까지 보고서 제출 미리알림 넣어줘"
+      ],
+      "edit": [
+        "회의 미리알림 10시로 바꿔줘",
+        "보고서 마감일 다음 주 월요일로 수정해줘"
+      ],
+      "delete": [
+        "회의 미리알림 삭제해줘",
+        "보고서 제출 미리알림 지워줘"
+      ],
+      "complete": [
+        "회의 미리알림 완료 처리해줘",
+        "보고서 제출 다 했어"
       ]
     },
     "repeat": {
@@ -64,6 +92,10 @@
       "added": "'{title}' 미리알림을 추가했어요{due_text}.",
       "added_no_due": " (마감일 없음)",
       "added_with_due": " ({due})",
+      "edited": "'{title}' 미리알림을 수정했어요.",
+      "deleted": "'{title}' 미리알림을 삭제했어요.",
+      "completed": "'{title}' 완료했어요.",
+      "not_found": "미리알림을 찾을 수 없어요.",
       "list_header_incomplete": "미완료 미리알림",
       "list_header_completed": "완료됨",
       "no_reminders": "미리알림이 없습니다.",
@@ -84,6 +116,18 @@
         "明日の朝9時に会議のリマインダーを追加して",
         "今日の午後3時に電話するリマインダーを作って",
         "金曜日までにレポート提出のリマインダーを設定して"
+      ],
+      "edit": [
+        "会議のリマインダーを10時に変更して",
+        "レポートの締め切りを来週月曜日に変更して"
+      ],
+      "delete": [
+        "会議のリマインダーを削除して",
+        "レポート提出のリマインダーを消して"
+      ],
+      "complete": [
+        "会議のリマインダーを完了にして",
+        "レポート提出を完了にして"
       ]
     },
     "repeat": {
@@ -100,6 +144,10 @@
       "added": "「{title}」リマインダーを追加しました{due_text}。",
       "added_no_due": "（期限なし）",
       "added_with_due": "（{due}）",
+      "edited": "「{title}」リマインダーを更新しました。",
+      "deleted": "「{title}」リマインダーを削除しました。",
+      "completed": "「{title}」を完了しました。",
+      "not_found": "リマインダーが見つかりません。",
       "list_header_incomplete": "未完了のリマインダー",
       "list_header_completed": "完了済み",
       "no_reminders": "リマインダーがありません。",
@@ -120,6 +168,18 @@
         "添加明天早上9点的会议提醒",
         "创建今天下午3点打电话的提醒",
         "设置周五前提交报告的提醒"
+      ],
+      "edit": [
+        "把会议提醒改到10点",
+        "把报告截止日期改到下周一"
+      ],
+      "delete": [
+        "删除会议提醒",
+        "删掉报告提交提醒"
+      ],
+      "complete": [
+        "把会议提醒标记为完成",
+        "报告提交完成了"
       ]
     },
     "repeat": {
@@ -136,6 +196,10 @@
       "added": "已添加「{title}」提醒{due_text}。",
       "added_no_due": "（无截止日期）",
       "added_with_due": "（{due}）",
+      "edited": "已更新「{title}」提醒。",
+      "deleted": "已删除「{title}」提醒。",
+      "completed": "已完成「{title}」。",
+      "not_found": "未找到提醒。",
       "list_header_incomplete": "未完成的提醒",
       "list_header_completed": "已完成",
       "no_reminders": "没有找到提醒。",

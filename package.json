@@ -1,11 +1,14 @@
 {
   "name": "mac-reminders-agent",
-  "version": "1.1.2",
+  "version": "1.2.2",
   "description": "Claude Code skill for macOS Reminders integration with native recurrence support",
   "main": "cli.js",
   "scripts": {
     "list": "node cli.js list",
-    "add": "node cli.js add"
+    "add": "node cli.js add",
+    "edit": "node cli.js edit",
+    "delete": "node cli.js delete",
+    "complete": "node cli.js complete"
   },
   "dependencies": {
     "applescript": "^1.0.0"
@@ -17,6 +20,6 @@
     "darwin"
   ],
   "author": "swancho",
-  "license": "CC-BY-NC-4.0",
+  "license": "MIT",
   "private": true
 }
