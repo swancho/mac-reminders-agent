@@ -1,6 +1,6 @@
 {
   "name": "mac-reminders-agent",
-  "version": "1.2.2",
+  "version": "1.2.0",
   "description": "Claude Code skill for macOS Reminders integration with native recurrence support",
   "main": "cli.js",
   "scripts": {

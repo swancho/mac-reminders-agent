@@ -1,6 +1,6 @@
 ---
 name: mac-reminders-agent
-version: 1.2.2
+version: 1.2.0
 author: swancho
 license: MIT
 description: |
