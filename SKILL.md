@@ -19,6 +19,7 @@ requirements:
     - macOS with Xcode Command Line Tools (includes Swift compiler)
   permissions:
     - macOS Reminders access (system prompt on first use)
+repository: https://github.com/swancho/mac-reminders-agent
 install: |
   cd $SKILL_DIR && npm install
 ---
