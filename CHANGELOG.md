@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-03-13
+
+### Added
+- **Meeting notes parser**: `parse` command to extract action items from meeting notes/text
+- Pattern matching for 4 languages (en, ko, ja, zh) - action keywords, date resolution, priority detection
+- 3 input methods: `--text "..."`, `--file path`, or positional file path argument
+- Date auto-resolution: "3월 20일", "tomorrow", "다음 주", "明日", "下周" etc.
+- Priority signal detection: "긴급", "urgent", "緊急", "紧急" → high priority
+- Language auto-detection based on Unicode character ranges
+- Parse triggers and response templates in locales.json for all 4 languages
+- `reminders/meeting-parser.js` - pure JS parser module (no external dependencies)
+
+### Changed
+- Updated SKILL.md with Section 7: Parse Meeting Notes
+- Updated README.md with parse usage and feature list
+- Added `repository` field to SKILL.md metadata
+
 ## [1.3.0] - 2026-03-11
 
 ### Added

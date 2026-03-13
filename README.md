@@ -1,6 +1,9 @@
 # Mac Reminders Agent
 
-**v1.2.0** | macOS Reminders app integration skill for OpenClaw/Claude agents.
+**v1.4.0** | macOS Reminders app integration skill for OpenClaw/Claude agents.
+
+[![GitHub](https://img.shields.io/github/v/release/swancho/mac-reminders-agent)](https://github.com/swancho/mac-reminders-agent/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
 
@@ -10,6 +13,10 @@
 - 🗑️ **Delete reminders** by ID
 - ✅ **Complete reminders** by ID
 - 🔄 **Native Recurrence**: Weekly, daily, monthly, yearly repeating reminders (single reminder, not duplicates)
+- 📂 **Multiple Lists**: View all reminder lists, filter/add to specific lists
+- 🔺 **Priority**: Set priority levels (high/medium/low)
+- 🔍 **Search**: Find reminders by title keyword
+- 📝 **Meeting Notes Parser**: Extract action items from meeting notes and suggest reminders
 - 🌍 Multi-language support (en, ko, ja, zh)
 - ⏰ Cron-compatible for scheduled checks
 - ☁️ **iCloud Sync**: Reminders sync automatically to all devices (iPhone, iPad, Mac) logged into the same Apple ID
@@ -153,6 +160,43 @@ node skills/mac-reminders-agent/cli.js add \
 
 > **Why Swift?** macOS Reminders AppleScript doesn't expose the `recurrence` property. Native recurrence requires EventKit (Swift). This creates a **single reminder with repeat rule**, not multiple duplicates.
 
+### Parse Meeting Notes
+
+Extract action items from meeting notes and suggest reminders. Pure text processing - no LLM required.
+
+```bash
+# From inline text
+node skills/mac-reminders-agent/cli.js parse --text "TODO: Submit report by March 20 - URGENT. 담당: 김민준 - 3월 25일까지 슬라이드 준비해야 함"
+
+# From a file
+node skills/mac-reminders-agent/cli.js parse /path/to/meeting_notes.txt --locale ko
+```
+
+**Output:**
+```json
+{
+  "ok": true,
+  "items": [
+    {
+      "title": "Submit report by March 20",
+      "due": "2026-03-20T17:00:00+09:00",
+      "priority": "high",
+      "confidence": "high",
+      "source_line": "TODO: Submit report by March 20 - URGENT."
+    }
+  ]
+}
+```
+
+**Supported patterns per language:**
+
+| Language | Action Keywords | Date Patterns |
+|----------|----------------|---------------|
+| English | TODO:, deadline:, by [date], need to | by March 20, tomorrow, next Friday |
+| Korean | ~까지, ~해야, 담당:, 기한: | 3월 15일, 내일, 다음 주 |
+| Japanese | ~まで, ~する必要, 担当:, 期限: | 3月15日, 明日, 来週 |
+| Chinese | ~之前, ~需要, 负责:, 截止: | 3月15日, 明天, 下周 |
+
 **Output:**
 ```json
 {
@@ -177,6 +221,8 @@ node skills/mac-reminders-agent/cli.js add \
 | `--interval` | No | Repeat interval (default: 1). e.g., `2` = every 2 weeks |
 | `--repeat-end` | No | End date: `YYYY-MM-DD` |
 | `--locale` | No | `en`, `ko`, `ja`, `zh` (default: `en`) |
+| `--text` | Yes (parse, if no file) | Meeting notes text to parse |
+| `--file` | Yes (parse, if no text) | Path to meeting notes file |
 
 ## Customization
 
